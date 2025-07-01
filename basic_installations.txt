@@ -1,0 +1,31 @@
+Enabling TRT and installing PyTorch on Jetson AGX Orin/Orin Nano. [Tested on Jetpack 5].
+Author: Kaustubh R Borgavi [PhD Student, aiz248319@iitd.ac.in]
+1. Copy the folder in the home directory of the Jetson device.
+2. Setting up TensorRT on Jetson
+    1. Add the following CUDA paths to the ~/.bashrc
+    export CUDA_HOME=/usr/local/cuda
+    # Adds the CUDA compiler to the PATH
+    export PATH=$CUDA_HOME/bin:$PATH
+    # Adds the libraries
+    export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
+    2. After this you will also need to setup PYTHONPATH such that your dist-packages are included as part of your virtualenv.
+    Add this to your .bashrc. This needs to be done because the python bindings to tensorrt are available in dist-packages and this folder is usually not visible to your virtualenv. 
+    To make them visible we add it to PYTHONPATH.
+    export PYTHONPATH=/usr/lib/python3.x/dist-packages:$PYTHONPATH
+    Here, 3.x is the installed Python version on the Jetson device as per the Jetpack.
+    Now, TensorRT should be accessible through your conda env. If you are using python venv, then create an env using system-site-packages for TensorRT to be accessible
+    within the env.
+3. Once done, install pyCuda using "pip install pycuda"
+4. Installing PyTorch:
+    1. Download the torch wheel file from the Nvidia website as per your Jetpack and python version [link: https://forums.developer.nvidia.com/t/pytorch-for-jetson/72048]. [Preferably, torch==2.0 with python 3.8]
+    2. Run the following:
+        sudo bash -c 'echo "deb https://repo.download.nvidia.com/jetson/common r34.1 main" >> /etc/apt/sources.list.d/nvidia-l4t-apt-source.list'
+        sudo bash -c 'echo "deb https://repo.download.nvidia.com/jetson/t234 r34.1 main" >> /etc/apt/sources.list.d/nvidia-l4t-apt-source.list'
+        sudo apt update
+        sudo apt dist-upgrade
+        # REBOOT
+        sudo apt install nvidia-jetpack
+    3. Once done, to install torch using the downloaded wheel, Run: pip install --no_cache /path/to/wheel
+    [Note: After installation, check whether torch is accessible within the env and whether torch.cuda.is_available() is True.]
+5. Create a folder called "Ultrasound_Images" on the Desktop for storing all images. 
+6. Run the gbc_inference.sh file for starting the GUI.
